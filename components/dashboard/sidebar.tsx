@@ -3,7 +3,18 @@
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { BarChart3, Users, Calendar, CreditCard, TrendingUp, Settings, LogOut, X, Dumbbell } from "lucide-react"
+import {
+  BarChart3,
+  Users,
+  Calendar,
+  CreditCard,
+  TrendingUp,
+  Settings,
+  LogOut,
+  X,
+  Dumbbell,
+  BookOpen,
+} from "lucide-react"
 import Link from "next/link"
 import { useRouter, usePathname } from "next/navigation"
 
@@ -18,6 +29,7 @@ const navigation = [
   { name: "Miembros", href: "/dashboard/members", icon: Users },
   { name: "Clases", href: "/dashboard/classes", icon: Calendar },
   { name: "Rendimiento", href: "/dashboard/performance", icon: TrendingUp },
+  { name: "Documentación", href: "/dashboard/documentacion", icon: BookOpen },
   { name: "Configuración", href: "/dashboard/settings", icon: Settings },
 ]
 

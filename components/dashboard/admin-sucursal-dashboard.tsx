@@ -3,9 +3,32 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Users, DollarSign, Calendar, AlertTriangle, Loader2 } from "lucide-react"
+import { SemaforizacionLegend } from "./semaforizacion-legend"
+
+interface Metricas {
+  miembros_activos: number
+  nuevos_semana: number
+  ingresos_mes: number
+  clases_hoy: number
+  pagos_pendientes: number
+  pagos_vencidos: number
+}
+
+interface ClaseHoy {
+  id: number
+  clase_nombre: string
+  hora_inicio: string
+  capacidad_maxima: number
+  inscritos_actuales: number
+}
+
+interface DashboardData {
+  metricas: Metricas
+  clasesHoy: ClaseHoy[]
+}
 
 export function AdminSucursalDashboard() {
-  const [dashboardData, setDashboardData] = useState<any>(null)
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
 
@@ -127,50 +150,62 @@ export function AdminSucursalDashboard() {
       </div>
 
       {/* Ocupación de Clases */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Ocupación de Clases - Hoy</CardTitle>
-          <CardDescription>Estado actual de las clases programadas</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {clasesHoy.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              <Calendar className="h-12 w-12 mx-auto mb-2 opacity-50" />
-              <p>No hay clases programadas para hoy</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {clasesHoy.map((clase: any) => {
-                const porcentaje =
-                  clase.capacidad_maxima > 0 ? Math.round((clase.inscritos_actuales / clase.capacidad_maxima) * 100) : 0
-                const estado = porcentaje >= 90 ? "rojo" : porcentaje >= 70 ? "amarillo" : "verde"
+      <div className="grid md:grid-cols-3 gap-6">
+        <div className="md:col-span-2">
+          <Card>
+            <CardHeader>
+              <CardTitle>Ocupación de Clases - Hoy</CardTitle>
+              <CardDescription>Estado actual de las clases programadas</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {clasesHoy.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  <Calendar className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                  <p>No hay clases programadas para hoy</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {clasesHoy.map((clase) => {
+                    const porcentaje =
+                      clase.capacidad_maxima > 0
+                        ? Math.round((clase.inscritos_actuales / clase.capacidad_maxima) * 100)
+                        : 0
+                    const estado = porcentaje >= 90 ? "rojo" : porcentaje >= 70 ? "amarillo" : "verde"
 
-                return (
-                  <div key={clase.id} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex items-center space-x-3">
-                      <div
-                        className={`w-3 h-3 rounded-full ${
-                          estado === "verde" ? "bg-green-500" : estado === "amarillo" ? "bg-yellow-500" : "bg-red-500"
-                        }`}
-                      />
-                      <div>
-                        <h4 className="font-medium">{clase.clase_nombre}</h4>
-                        <p className="text-sm text-muted-foreground">{clase.hora_inicio}</p>
+                    return (
+                      <div key={clase.id} className="flex items-center justify-between p-3 border rounded-lg">
+                        <div className="flex items-center space-x-3">
+                          <div
+                            className={`w-3 h-3 rounded-full ${
+                              estado === "verde"
+                                ? "bg-green-500"
+                                : estado === "amarillo"
+                                  ? "bg-yellow-500"
+                                  : "bg-red-500"
+                            }`}
+                          />
+                          <div>
+                            <h4 className="font-medium">{clase.clase_nombre}</h4>
+                            <p className="text-sm text-muted-foreground">{clase.hora_inicio}</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-medium">
+                            {clase.inscritos_actuales}/{clase.capacidad_maxima}
+                          </p>
+                          <p className="text-xs text-muted-foreground">{porcentaje}% ocupación</p>
+                        </div>
                       </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-medium">
-                        {clase.inscritos_actuales}/{clase.capacidad_maxima}
-                      </p>
-                      <p className="text-xs text-muted-foreground">{porcentaje}% ocupación</p>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+                    )
+                  })}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+        <SemaforizacionLegend />
+      </div>
     </div>
   )
 }
+
